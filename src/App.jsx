@@ -1,92 +1,65 @@
-import { useEffect, useRef } from 'react';
-import Lenis from '@studio-freight/lenis';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis'
+import SplitText from "../src/reactbits/SplitText";
+import Nav from "./components/Nav";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import gsap from "gsap";
+import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+const App = () => {
+  const cursorref = useRef(null)
 
-export default function ExoapeStyleParallax() {
-  const scrollRef = useRef(null);
+  const lenis = new Lenis({
+  autoRaf: true,
+  lerp:0.06,
+  smoothTouch:true,
+  ease: 'ease.inOut',
 
-  useEffect(() => {
-    const lenis = new Lenis({
-      smooth: true,
-      lerp: 0.1, // control scroll speed
-    });
+});
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.lagSmoothing(0);
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+  const cursor = function (e) {
+    console.log(e)
+    if(e.x < 0 || e.y <0) {
+      gsap.to('.cursor',{
+        opacity:0,
+        duration:0.5,
+        ease:"ease.in"
+      })
+    };
+    gsap.to('.cursor',{
+      x:e.x,
+      y:e.y,
+      opacity:1,
+      duration:0.5,
+      ease:"ease.inOut"
+    })
+  }
 
-    requestAnimationFrame(raf);
-    lenis.on('scroll', ScrollTrigger.update);
-
-    return () => lenis.destroy();
-  }, []);
-
-  useEffect(() => {
-    // Slow background scroll
-    gsap.to('.bg-img', {
-      yPercent: -30,
-      scale: 1.1,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '.section',
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true,
-      },
-    });
-
-    // Text fade in + move
-    gsap.from('.heading', {
-      y: 100,
-      opacity: 0,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: '.heading',
-        start: 'top 80%',
-        end: 'top 40%',
-        scrub: true,
-      },
-    });
-
-    gsap.from('.paragraph', {
-      y: 50,
-      opacity: 0,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: '.paragraph',
-        start: 'top 85%',
-        end: 'top 50%',
-        scrub: true,
-      },
-    });
-  }, []);
+  document.addEventListener('mousemove',cursor)
 
   return (
-    <div ref={scrollRef} className="bg-black text-white font-sans">
-      <section className="section relative h-screen overflow-hidden">
-        <div className="bg-img absolute top-0 left-0 w-full h-full -z-10">
-          <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
-            alt="Background"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="relative z-10 flex flex-col justify-center items-center h-full text-center px-4">
-          <h1 className="heading text-6xl font-bold mb-4">Scroll Magic ✨</h1>
-          <p className="paragraph text-xl max-w-xl">
-            This is where your background scrolls slowly, your content fades in, and everything feels buttery smooth with Lenis + GSAP.
-          </p>
-        </div>
-      </section>
-
-      <section className="h-screen flex items-center justify-center bg-gray-900">
-        <h2 className="text-4xl">More Sections Below...</h2>
-      </section>
+    <div className="h-screen w-full">
+      <div className='cursor opacity-0 flex justify-center items-center text-white font-gray-300 fixed w-18 h-18 rounded-full backdrop-blur z-69 bg-white/30'>scroll</div>
+      <Nav />
+      <div className="w-full h-auto flex items-center justify-center relative z-10">
+        <SplitText
+          text="GUCCI"
+          className="text-[22rem] text-white tracking-widest font-semibold text-center -mt-10"
+          delay={140}
+          duration={1.2}
+          ease="elastic1.out(1,0.3)"
+          splitType="chars"
+          from={{ opacity: 0, y: 40 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.1}
+          rootMargin="-100px"
+          textAlign="center"
+        />
+      </div>
+      <img className="w-full h-auto aspect-[16/9] cover absolute top-0" src="../src/assets/woman.jpg" alt="" />
     </div>
   );
-}
+};
+
+export default App;

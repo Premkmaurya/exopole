@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+@font-face {
+    font-family: 'gucci';
+    font-style: normal;
+    font-weight: 900;
+    src: local('Granjon'), url("../src/assets/Gucci-Font/Granjon.otf") format('woff');
+}
+
+*{
+    font-family: gucci;
+}
+
+/* Hide scrollbar for all browsers */
+::-webkit-scrollbar {
+    display: none;
+}
+
+html {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
